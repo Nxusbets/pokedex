@@ -3,6 +3,7 @@ import PokemonList from './components/PokemonList';
 import Search from './components/Search';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
     return (
