@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const PokemonModal = ({ show, onHide, pokemon }) => {
     const [evolutionChain, setEvolutionChain] = useState(null);
+    const [evolutionNames, setEvolutionNames] = useState([]);
 
     useEffect(() => {
         const fetchEvolutionChain = async () => {
@@ -41,30 +42,38 @@ const PokemonModal = ({ show, onHide, pokemon }) => {
         return evolutions;
     };
 
-    if (!pokemon) return null;
-
-    const [evolutionNames, setEvolutionNames] = useState([]);
-
     useEffect(() => {
         const fetchEvolutionData = async () => {
             if (evolutionChain) {
                 const evolutions = await getEvolutionNames(evolutionChain);
                 setEvolutionNames(evolutions);
+            } else {
+                setEvolutionNames([]);
             }
         };
 
         fetchEvolutionData();
     }, [evolutionChain]);
 
+    if (!pokemon) return null;
+
     return (
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton className="bg-danger text-white"> 
+        <Modal show={show} onHide={onHide} className="pokemon-modal">
+            <Modal.Header closeButton className="bg-danger text-white">
                 <Modal.Title>{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <img src={pokemon.sprites.front_default} alt={pokemon.name} />
                 <p>ID: {pokemon.id}</p>
-                {/* ... más detalles del Pokémon ... */}
+                {pokemon.types && (
+                    <p>
+                        <strong>Type:</strong> {pokemon.types.map((type, index) => (
+                            <span key={index} style={{ margin: '0 5px' }}>
+                                {type.type.name.charAt(0).toUpperCase() + type.type.name.slice(1)}
+                            </span>
+                        ))}
+                    </p>
+                )}
                 {evolutionNames.length > 1 && (
                     <div>
                         <h4>Evoluciones:</h4>
@@ -80,7 +89,7 @@ const PokemonModal = ({ show, onHide, pokemon }) => {
                     </div>
                 )}
             </Modal.Body>
-            <Modal.Footer>
+            <Modal.Footer className="bg-light">
                 <Button variant="secondary" onClick={onHide}>Cerrar</Button>
             </Modal.Footer>
         </Modal>
